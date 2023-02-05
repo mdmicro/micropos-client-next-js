@@ -2,6 +2,9 @@
   "name": "micropos-f",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "url": "https://github.com/mdmicro/micropos-f.git"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
