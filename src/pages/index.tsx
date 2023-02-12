@@ -6,6 +6,7 @@ import Cashregister from "@/pages/menuPages/Cashregister";
 import Terminal from "@/pages/menuPages/Terminal";
 import Catalog from "@/pages/menuPages/Catalog";
 import Pos from "@/pages/menuPages/Pos";
+import Companie from "@/pages/menuPages/Companie";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -75,7 +76,7 @@ const ContentIn = (activeMenu: MenuItems) => {
         switch(activeMenu) {
             case MenuItems.POS: return <Pos />
             case MenuItems.CATALOG: return <Catalog />
-            case MenuItems.ORG: return <Organization />
+            case MenuItems.ORG: return <Companie />
             case MenuItems.CASHREGISTER: return <Cashregister />
             case MenuItems.TERMINAL: return <Terminal />
         }
