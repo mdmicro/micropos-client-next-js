@@ -1,10 +1,18 @@
-import React, {createRef, useEffect} from 'react';
-import {Button, Form, Input} from "antd";
+import React, {createRef, useEffect, useState} from 'react';
+import {Button, Form, Input, notification} from "antd";
 import axios from 'axios';
 
 const onFinish = (values: any) => {
-    axios.post('api/companie',values).then(res => console.log(res.data)).catch(e=>console.log(e))
-    console.log('Success:', values);
+    axios.post('api/companie',values).then(res => {
+        console.log('next front companie post res')
+        // console.log(res.status)
+        // console.log(res.statusText)
+        // console.log(res.data)
+        notification.success({message: 'Сохранено', duration: 3})
+    }).catch(e=> {
+        console.log('error:' + e)
+        notification.error({message: 'Ошибка ', description: e, duration: 10})
+    })
 };
 
 const onFinishFailed = (errorInfo: any) => {
@@ -18,9 +26,13 @@ export default function Companie() {
         const res = axios.get('api/companie').then(
             res => {
                 console.log(res.data)
-                form?.setFieldsValue(res.data)
+                res && form?.setFieldsValue(res.data)
             }
-        ).catch(e=>console.log(e));
+        ).catch(e=>{
+                console.log(e)
+                notification.error({message: 'Ошибка ', description: e.message})
+        }
+        );
     }, []);
 
     return (
