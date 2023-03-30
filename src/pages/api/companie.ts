@@ -2,16 +2,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from "axios";
 import {urlSrv} from "@/types/reqTypes";
+import {CompanieData} from "@/pages/menuPages/Companie";
 
-type Data = {
-  name: string
-  inn: string
-  kpp: string
-}
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<CompanieData>
 ) {
   console.log(' - request companie -')
   console.log(' req body: ' + req.body)
@@ -22,7 +18,7 @@ export default async function handler(
       try {
         response = await axios.get('http://' + urlSrv + '/companies')
         console.log('resp data:' + response.data)
-        res.status(response.status).send(response.data.length ? response.data[0] : undefined)
+        res.status(response.status).send(response.data)
       } catch (e: any) {
         console.log('error:' + e.message + ' code:' + e.code)
         // res.status(response.status).send(response.data)
@@ -30,7 +26,7 @@ export default async function handler(
       }
     } break;
     case 'POST': {
-      axios.post('http://' + urlSrv + '/companies', req.body).then(response=>{
+      await axios.post('http://' + urlSrv + '/companies', req.body).then(response=>{
         console.log('- post companie complete -')
         console.log(response.status)
         console.log(response.data)

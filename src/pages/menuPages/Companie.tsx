@@ -1,5 +1,5 @@
 import React, {createRef, useEffect, useState} from 'react';
-import {Button, Form, Input, notification} from "antd";
+import {Button, Form, Input, notification, Select} from "antd";
 import axios from 'axios';
 
 const onFinish = (values: any) => {
@@ -19,14 +19,41 @@ const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
 };
 
+
 export default function Companie() {
-    const [form] = Form.useForm<{name: string, inn: string, kpp: string}>()
+    const [form] = Form.useForm<CompanieData>()
+    const [curCompanieId, setCurCompanieId] = useState(0)
+    const [companies, setCompanies] = useState<CompanieData[]>([{
+        id: 0,
+        name: '',
+        fullName: '',
+        inn: '',
+        kpp: '',
+        ogrn: '',
+        cashier: '',
+        address: '',
+        addressUr: '',
+        vatType: '',
+        description: '',
+    }])
+
+    const onSelect = (id: number) => {
+        console.log(id)
+        setCurCompanieId(id)
+        const curCompanie = companies.find(item => item.id === id)
+        curCompanie && form?.setFieldsValue(curCompanie)
+    };
 
     useEffect(() => {
         const res = axios.get('api/companie').then(
             res => {
                 console.log(res.data)
-                res && form?.setFieldsValue(res.data)
+                if(res) {
+                    form?.setFieldsValue(res.data[0])
+                    setCurCompanieId(res.data[0].id)
+                    setCompanies(res.data)
+                }
+
             }
         ).catch(e=>{
                 console.log(e)
@@ -36,7 +63,7 @@ export default function Companie() {
     }, []);
 
     return (
-        <Form
+    <Form
             form={form}
             name="companie"
             labelCol={{ span: 8 }}
@@ -47,12 +74,28 @@ export default function Companie() {
             onFinishFailed={onFinishFailed}
             autoComplete="on"
         >
+
+        <Form.Item
+            label="Организация(ИП)"
+            name="companies"
+            style={{marginBottom: '40px'}}
+        >
+            <Select allowClear={true}  onSelect={onSelect} options={
+                companies && companies.map(item => {
+                    return {
+                        value: item.id,
+                        label: item.name,
+                    }
+                })
+            } />
+        </Form.Item>
+
             <Form.Item
                 label="Наименование организации(ИП)"
                 name="name"
                 rules={[{ required: true, message: 'Введите наименование организации!' }]}
             >
-                <Input />
+                <Input/>
             </Form.Item>
             <Form.Item
                 label="ИНН"
@@ -77,7 +120,7 @@ export default function Companie() {
             </Form.Item>
             <Form.Item
                 label="Директор"
-                name="direktor"
+                name="cashier"
                 rules={[{ required: false, message: '' }]}
             >
                 <Input />
@@ -120,4 +163,18 @@ export default function Companie() {
             </Form.Item>
         </Form>
     );
+}
+
+export interface CompanieData {
+    id: number
+    name: string
+    fullName: string
+    inn: string
+    kpp: string
+    ogrn: string
+    cashier: string
+    address: string
+    addressUr: string
+    vatType: string
+    description: string
 }
