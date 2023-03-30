@@ -33,11 +33,20 @@ export default async function handler(
         res.status(response.status).send(response.data)
       }).catch(e=> {
         console.log('error:' + e)
-        // res.status(response.status).send(response.data)
         throw e
       })
     } break;
-
+    case 'PATCH': {
+      await axios.patch('http://' + urlSrv + `/companies/${req.body.id}`, req.body).then(response=>{
+        console.log('- patch companie complete -')
+        console.log(response.status)
+        console.log(response.data)
+        res.status(response.status).send(response.data)
+      }).catch(e=> {
+        console.log('error:' + e)
+        throw e
+      })
+    } break;
   }
 
 }

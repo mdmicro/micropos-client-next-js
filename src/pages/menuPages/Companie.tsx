@@ -3,7 +3,7 @@ import {Button, Form, Input, notification, Select} from "antd";
 import axios from 'axios';
 
 const onFinish = (values: any) => {
-    axios.post('api/companie',values).then(res => {
+    axios.patch('api/companie',values).then(res => {
         console.log('next front companie post res')
         // console.log(res.status)
         // console.log(res.statusText)
@@ -75,6 +75,12 @@ export default function Companie() {
             autoComplete="on"
         >
 
+        <Form.Item
+            name="id"
+            hidden={true}
+        >
+          <Input />
+        </Form.Item>
         <Form.Item
             label="Организация(ИП)"
             name="companies"
