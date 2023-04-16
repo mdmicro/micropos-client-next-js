@@ -131,7 +131,8 @@ const Companie: React.FC = () => {
             <Form.Item
                 label="ИНН"
                 name="inn"
-                rules={[{ required: false, message: 'Ошибка в поле ИНН' }]}
+                rules={[{ required: false, message: 'Ошибка в поле ИНН' },
+                    { len: 12, message: 'Длина ИНН 12 символов!' }]}
             >
                 <Input />
             </Form.Item>
