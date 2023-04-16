@@ -1,30 +1,12 @@
-import React, {createRef, useEffect, useState} from 'react';
-import {Button, Form, Input, notification, Select} from "antd";
+import React, {useEffect, useState} from 'react';
+import {Button, Form, Input, notification, Select, Space} from "antd";
 import axios from 'axios';
 
-const onFinish = (values: any) => {
-    axios.patch('api/companie',values).then(res => {
-        console.log('next front companie post res')
-        // console.log(res.status)
-        // console.log(res.statusText)
-        // console.log(res.data)
-        notification.success({message: 'Сохранено', duration: 3})
-    }).catch(e=> {
-        console.log('error:' + e)
-        notification.error({message: 'Ошибка ', description: e, duration: 10})
-    })
-};
-
-const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
-};
-
-
-export default function Companie() {
+const Companie: React.FC = () => {
     const [form] = Form.useForm<CompanieData>()
-    const [curCompanieId, setCurCompanieId] = useState(0)
+    const [curCompanieId, setCurCompanieId] = useState<number | null>(null)
     const [companies, setCompanies] = useState<CompanieData[]>([{
-        id: 0,
+        id: null,
         name: '',
         fullName: '',
         inn: '',
@@ -37,29 +19,63 @@ export default function Companie() {
         description: '',
     }])
 
-    const onSelect = (id: number) => {
-        console.log(id)
-        setCurCompanieId(id)
+    const onFinish = (values: any) => {
+        axios.post('api/companie',values).then(async res => {
+            console.log('next front companie post res')
+            // console.log(res.status)
+            // console.log(res.statusText)
+            // console.log(JSON.stringify(res.data, null, 1))
+            notification.success({message: 'Сохранено', duration: 3})
+            if (!curCompanieId) {
+                await setCurCompanieId(res.data.id)
+                form?.setFieldValue("companies", res.data.id)
+            }
+
+            getCompanies();
+        }).catch(e=> {
+            console.log('error:' + e)
+            notification.error({message: 'Ошибка ', description: e, duration: 10})
+        })
+    };
+
+    const onFinishFailed = (errorInfo: any) => {
+        console.log('Failed:', errorInfo);
+    };
+
+    const handlerAdd = () => {
+        form?.resetFields();
+        setCurCompanieId(null)
+    }
+
+    const handlerDelete = () => {
+
+    }
+
+    const handlerSelect = async (id: number) => {
+        await setCurCompanieId(id)
+        console.log("handlerSelect: " + id)
         const curCompanie = companies.find(item => item.id === id)
         curCompanie && form?.setFieldsValue(curCompanie)
     };
 
-    useEffect(() => {
-        const res = axios.get('api/companie').then(
-            res => {
-                console.log(res.data)
+    const getCompanies = () => {
+        axios.get('api/companie').then(
+            async res => {
+                // console.log("Get companies: " + JSON.stringify(res.data, null, 1))
+                console.log("getCompanies: " + curCompanieId)
                 if(res) {
-                    form?.setFieldsValue(res.data[0])
-                    setCurCompanieId(res.data[0].id)
-                    setCompanies(res.data)
+                    await setCompanies(res.data)
                 }
-
             }
         ).catch(e=>{
                 console.log(e)
                 notification.error({message: 'Ошибка ', description: e.message})
-        }
+            }
         );
+    }
+
+    useEffect(() => {
+            getCompanies();
     }, []);
 
     return (
@@ -76,17 +92,11 @@ export default function Companie() {
         >
 
         <Form.Item
-            name="id"
-            hidden={true}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
             label="Организация(ИП)"
             name="companies"
             style={{marginBottom: '40px'}}
         >
-            <Select allowClear={true}  onSelect={onSelect} options={
+             <Select allowClear={true} onChange={handlerSelect} options={
                 companies && companies.map(item => {
                     return {
                         value: item.id,
@@ -96,6 +106,10 @@ export default function Companie() {
             } />
         </Form.Item>
 
+
+            <Form.Item name="id" hidden={true}>
+                <Input />
+            </Form.Item>
             <Form.Item
                 label="Наименование организации(ИП)"
                 name="name"
@@ -106,7 +120,7 @@ export default function Companie() {
             <Form.Item
                 label="ИНН"
                 name="inn"
-                rules={[{ required: false, message: '' }]}
+                rules={[{ required: false, message: 'Ошибка в поле ИНН' }]}
             >
                 <Input />
             </Form.Item>
@@ -162,17 +176,32 @@ export default function Companie() {
                 <Input />
             </Form.Item>
 
+        <div style={{ maxWidth: 770, textAlign: "right"}}>
+        <Space wrap>
+            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Button htmlType="button" onClick={handlerDelete}>
+                    Удалить
+                </Button>
+            </Form.Item>
+            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Button htmlType="button" onClick={handlerAdd}>
+                    Добавить
+                </Button>
+            </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                 <Button type="primary" htmlType="submit">
                     Сохранить
                 </Button>
             </Form.Item>
-        </Form>
+        </Space>
+    </div>
+
+    </Form>
     );
 }
 
 export interface CompanieData {
-    id: number
+    id: number | null
     name: string
     fullName: string
     inn: string
@@ -184,3 +213,5 @@ export interface CompanieData {
     vatType: string
     description: string
 }
+
+export default Companie;
