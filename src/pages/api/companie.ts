@@ -46,11 +46,11 @@ export default async function handler(
           throw e
         })
     } break;
-    case 'DELETE': {
-      req.body.id && await axios.patch('http://' + urlSrv + `/companies/${req.body.id}`, req.body).then(response=>{
+    case 'PATCH': {
+      await axios.delete('http://' + urlSrv + `/companies/${req.body.id}`).then(response=>{
             console.log('- delete companie complete -')
-            console.log(response.status)
-            console.log(response.data)
+            // console.log(response.status)
+            // console.log(response.data)
             res.status(response.status).send(response.data)
           }).catch(e=> {
             console.log('error:' + e)

@@ -19,7 +19,7 @@ const Companie: React.FC = () => {
         description: '',
     }])
 
-    const onFinish = (values: any) => {
+    const onFinish = (values: CompanieData) => {
         axios.post('api/companie',values).then(async res => {
             console.log('next front companie post res')
             // console.log(res.status)
@@ -30,7 +30,6 @@ const Companie: React.FC = () => {
                 await setCurCompanieId(res.data.id)
                 form?.setFieldValue("companies", res.data.id)
             }
-
             getCompanies();
         }).catch(e=> {
             console.log('error:' + e)
@@ -42,13 +41,25 @@ const Companie: React.FC = () => {
         console.log('Failed:', errorInfo);
     };
 
-    const handlerAdd = () => {
+    const handlerFormReset = () => {
         form?.resetFields();
         setCurCompanieId(null)
     }
 
-    const handlerDelete = () => {
-
+    const handlerDelete = (values: CompanieData) => {
+        // console.log('-=handler delete=-')
+        // console.log(JSON.stringify(values, null, 1))
+        if(!values) {
+            return;
+        }
+        axios.patch('api/companie/',values).then(async res => {
+            handlerFormReset();
+            getCompanies();
+            notification.success({message: 'Удалено', duration: 3})
+        }).catch(e=> {
+            console.log('error:' + e)
+            notification.error({message: 'Ошибка ', description: e, duration: 10})
+        })
     }
 
     const handlerSelect = async (id: number) => {
@@ -179,12 +190,12 @@ const Companie: React.FC = () => {
         <div style={{ maxWidth: 770, textAlign: "right"}}>
         <Space wrap>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button htmlType="button" onClick={handlerDelete}>
+                <Button htmlType="button" onClick={()=>handlerDelete(form?.getFieldsValue())}>
                     Удалить
                 </Button>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button htmlType="button" onClick={handlerAdd}>
+                <Button htmlType="button" onClick={handlerFormReset}>
                     Добавить
                 </Button>
             </Form.Item>
