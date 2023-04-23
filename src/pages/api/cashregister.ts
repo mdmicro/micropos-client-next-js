@@ -2,21 +2,21 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from "axios";
 import {urlSrv} from "@/types/reqTypes";
-import {CompanieData} from "@/pages/menuPages/Companie";
+import {CashregisterData} from "@/pages/menuPages/Cashregister";
 
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<CompanieData>
+  res: NextApiResponse<CashregisterData>
 ) {
-  console.log(' - request api/companie -')
+  console.log(' - request api/cashregister -')
   console.log(JSON.stringify(req.body, null, 1))
 
   let response: any;
   switch (req.method) {
     case 'GET': {
       try {
-        response = await axios.get('http://' + urlSrv + '/companies')
+        response = await axios.get('http://' + urlSrv + '/cashregister')
         // console.log('resp data:' + response.data)
         res.status(response.status).send(response.data)
       } catch (e: any) {
@@ -27,8 +27,8 @@ export default async function handler(
     } break;
     case 'POST': {
       req.body.id
-          ? await axios.patch('http://' + urlSrv + `/companies/${req.body.id}`, req.body).then(response=>{
-            console.log('- patch companie complete -')
+          ? await axios.patch('http://' + urlSrv + `/cashregister/${req.body.id}`, req.body).then(response=>{
+            console.log('- patch cashregister complete -')
             // console.log(response.status)
             // console.log(response.data)
             res.status(response.status).send(response.data)
@@ -36,8 +36,8 @@ export default async function handler(
             console.log('error:' + e)
             throw e
           })
-        : await axios.post('http://' + urlSrv + '/companies', req.body).then(response=>{
-          console.log('- post companie complete -')
+        : await axios.post('http://' + urlSrv + '/cashregister', req.body).then(response=>{
+          console.log('- post cashregister complete -')
           // console.log(response.status)
           // console.log(response.data)
           res.status(response.status).send(response.data)
@@ -47,10 +47,8 @@ export default async function handler(
         })
     } break;
     case 'PATCH': {
-      await axios.delete('http://' + urlSrv + `/companies/${req.body.id}`).then(response=>{
-            console.log('- delete companie complete -')
-            // console.log(response.status)
-            // console.log(response.data)
+      await axios.delete('http://' + urlSrv + `/cashregister/${req.body.id}`).then(response=>{
+            console.log('- delete cashregister complete -')
             res.status(response.status).send(response.data)
           }).catch(e=> {
             console.log('error:' + e)

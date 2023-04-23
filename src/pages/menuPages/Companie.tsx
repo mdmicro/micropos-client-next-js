@@ -72,10 +72,12 @@ const Companie: React.FC = () => {
     const getCompanies = () => {
         axios.get('api/companie').then(
             async res => {
-                // console.log("Get companies: " + JSON.stringify(res.data, null, 1))
+                console.log("Get companies: " + JSON.stringify(res, null, 1))
                 console.log("getCompanies: " + curCompanieId)
                 if(res) {
                     await setCompanies(res.data)
+                } else {
+                    notification.error({message: 'Ошибка ', description: res})
                 }
             }
         ).catch(e=>{
@@ -116,8 +118,6 @@ const Companie: React.FC = () => {
                 })
             } />
         </Form.Item>
-
-
             <Form.Item name="id" hidden={true}>
                 <Input />
             </Form.Item>

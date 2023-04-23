@@ -14,7 +14,7 @@ export default function Home() {
       const {
       token: { colorBgContainer },
     } = theme.useToken();
-      const [activeMenu, setActiveMenu] = React.useState<MenuItems>(MenuItems.POS);
+      const [activeMenu, setActiveMenu] = React.useState<MenuItems | MenuDeviceItems>(MenuItems.POS);
 
       return (
           <Layout>
@@ -31,33 +31,29 @@ export default function Home() {
                     }}
                     style={{background: 0xffff , marginTop: 0}}
                 >
-                  {/*<div style={{*/}
-                  {/*    height: '32px',*/}
-                  {/*    margin: '16px',*/}
-                  {/*    background: '0xffff',*/}
-                  {/*    // background: 'rgba(255, 255, 255, 0.2)'*/}
-                  {/*    marginTop: '0px',*/}
-                  {/*}} />*/}
                   <Menu
                       theme="light"
-                      mode="inline"
+                      mode="vertical"
                       defaultSelectedKeys={[MenuItems.POS]}
                       items={[
+                          ...[
                           {icon: UserOutlined, name: MenuItems.POS},
                           {icon: UserOutlined, name: MenuItems.CATALOG},
                           {icon: VideoCameraOutlined, name: MenuItems.ORG},
-                          {icon: UploadOutlined, name: MenuItems.CASHREGISTER},
-                          {icon: UserOutlined, name: MenuItems.TERMINAL}
                       ].map(
                           ({icon, name}) => ({
                             key: name,
                             icon: React.createElement(icon),
                             label: name,
-                              onClick: (item) => {
+                            onClick: (item: any) => {
                                 setActiveMenu(item.key as MenuItems);
-                              },
-                          }),
-                      )}
+                            },
+                          })),
+                      { key: MenuDeviceItems.DEVICES, label: MenuDeviceItems.DEVICES, icon: React.createElement(UserOutlined), children: [
+                        { key: MenuDeviceItems.CASHREGISTER, label: MenuDeviceItems.CASHREGISTER, onClick: () => setActiveMenu(MenuDeviceItems.CASHREGISTER)},
+                        { key: MenuDeviceItems.TERMINAL, label: MenuDeviceItems.TERMINAL, onClick: () => setActiveMenu(MenuDeviceItems.TERMINAL)}
+                      ]},
+                      ]}
                   />
                 </Sider>
                   <Content style={{ margin: '0px 0px 0px' }}>
@@ -71,21 +67,25 @@ export default function Home() {
       );
 }
 
-const ContentIn = (activeMenu: MenuItems) => {
-
+const ContentIn = (activeMenu: MenuItems | MenuDeviceItems) => {
         switch(activeMenu) {
             case MenuItems.POS: return <Pos />
             case MenuItems.CATALOG: return <Catalog />
             case MenuItems.ORG: return <Companie />
-            case MenuItems.CASHREGISTER: return <Cashregister />
-            case MenuItems.TERMINAL: return <Terminal />
+            case MenuDeviceItems.DEVICES: return <></>
+            case MenuDeviceItems.CASHREGISTER: return <Cashregister />
+            case MenuDeviceItems.TERMINAL: return <Terminal />
         }
 }
 
 enum MenuItems {
-    'POS' = 'Касса',
-    'CATALOG' = 'Каталог',
-    'ORG' = 'Организация',
-    'CASHREGISTER' = 'ККТ',
-    'TERMINAL' = 'Терминал',
+    POS = 'Касса',
+    CATALOG = 'Каталог товаров',
+    ORG = 'Организация',
+}
+
+enum MenuDeviceItems {
+    DEVICES = 'Устройства',
+    CASHREGISTER = 'ККТ',
+    TERMINAL = 'Терминал',
 }
