@@ -3,7 +3,7 @@ import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/i
 import { Layout, Menu, theme } from 'antd';
 import Organization from "@/pages/menuPages/Companie";
 import Cashregister from "@/pages/menuPages/Cashregister";
-import Terminal from "@/pages/menuPages/Terminal";
+import Terminal from "@/pages/menuPages/Terminal/Terminal";
 import Catalog from "@/pages/menuPages/Catalog";
 import Pos from "@/pages/menuPages/Pos";
 import Companie from "@/pages/menuPages/Companie";

@@ -1,8 +1,9 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Form, Input, Modal, notification, Select, Space} from "antd";
+import React, {useEffect, useState} from 'react';
+import {Button, Form, Input, notification, Select, Space} from "antd";
 import axios from 'axios';
 import {CompanieData} from "@/pages/menuPages/Companie";
 import {SettingOutlined} from "@ant-design/icons";
+import TerminalModalConfig from "@/pages/menuPages/Terminal/TerminalConfigModal";
 
 
 const Terminal: React.FC = () => {
@@ -205,7 +206,7 @@ const Terminal: React.FC = () => {
             </div>
         </Form>
 
-        <ModalConfig visible={modalVisible} config={form?.getFieldValue('config')} handlerSet={(value)=> {
+        <TerminalModalConfig visible={modalVisible} config={form?.getFieldValue('config')} handlerSet={(value)=> {
             value && form.setFieldValue('config', JSON.stringify(value))
             setModalVisible(false)
         }} />
@@ -213,75 +214,6 @@ const Terminal: React.FC = () => {
     );
 }
 
-const ModalConfig: React.FC<ModalConfigI> = ({visible, config, handlerSet}) => {
-    const [formModal] = Form.useForm<TerminalConfig>()
-
-    useEffect(()=>{
-        config && formModal.setFieldsValue(JSON.parse(config))
-    },[config])
-
-    return (
-        <Modal
-            visible={visible}
-            onCancel={() => handlerSet(undefined)}
-            onOk={() => handlerSet(formModal.getFieldsValue())}
-            okText={"Сохранить"}
-            cancelText={"Отменить"}
-            width={'800px'}
-            closable={false}
-        >
-            <Form
-                form={formModal}
-                name="modalTerminal"
-                labelCol={{span: 8}}
-                wrapperCol={{span: 16}}
-                initialValues={{config}}
-                autoComplete="on"
-            >
-                <Form.Item
-                    label="Интегрируемое ПО терминала"
-                    name="softType"
-                    rules={[{required: false, message: ''}]}
-                >
-                    <Select
-                        options={[
-                            {value: 'sber', label: 'Сбербанк'},
-                            {value: 'arcus2', label: 'Arcus2'},
-                        ]}
-                    />
-                </Form.Item>
-                <Form.Item
-                    label="Путь установки ПО терминала"
-                    name="softPath"
-                    rules={[{required: false, message: ''}]}
-                >
-                    <Input/>
-                </Form.Item>
-                <Form.Item
-                    label="Шаблон RRN"
-                    name="parseRRNTemplate"
-                    rules={[{required: false, message: ''}]}
-                >
-                    <Input/>
-                </Form.Item>
-                <Form.Item
-                    label="Отдел"
-                    name="department"
-                    rules={[{required: false, message: ''}]}
-                >
-                    <Input/>
-                </Form.Item>
-                <Form.Item
-                    label="ID терминала"
-                    name="merchantId"
-                    rules={[{required: false, message: ''}]}
-                >
-                    <Input/>
-                </Form.Item>
-            </Form>
-        </Modal>
-    );
-}
 
 export interface TerminalData {
     id: number | null
@@ -298,12 +230,6 @@ interface TerminalConfig {
     parseRRNTemplate: string;
     department: string;
     merchantId?: string;
-}
-
-interface ModalConfigI {
-    visible: boolean;
-    config: string | undefined;
-    handlerSet: (config: TerminalConfig | undefined) => void;
 }
 
 export default Terminal;

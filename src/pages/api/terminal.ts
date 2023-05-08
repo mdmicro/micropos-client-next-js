@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from "axios";
 import {urlSrv} from "@/types/reqTypes";
-import {TerminalData} from "@/pages/menuPages/Terminal";
+import {TerminalData} from "@/pages/menuPages/Terminal/Terminal";
 
 
 export default async function handler(
