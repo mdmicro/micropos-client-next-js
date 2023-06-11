@@ -73,7 +73,7 @@ const TerminalModalConfig: React.FC<ModalConfigI> = ({visible, config, handlerSe
 }
 
 
-interface TerminalConfig {
+export interface TerminalConfig {
     softType: 'sber' | 'arcus';
     softPath: string;
     parseRRNTemplate: string;

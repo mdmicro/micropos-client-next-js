@@ -3,7 +3,7 @@ import {Button, Form, Input, notification, Select, Space} from "antd";
 import axios from 'axios';
 import {CompanieData} from "@/pages/menuPages/Companie";
 import {SettingOutlined} from "@ant-design/icons";
-import TerminalModalConfig from "@/pages/menuPages/Terminal/TerminalConfigModal";
+import TerminalModalConfig, {TerminalConfig} from "@/pages/menuPages/Terminal/TerminalConfigModal";
 
 
 const Terminal: React.FC = () => {
@@ -222,14 +222,6 @@ export interface TerminalData {
     companie_id: number
     description: string
     config: TerminalConfig;
-}
-
-interface TerminalConfig {
-    softType: 'sber' | 'arcus';
-    softPath: string;
-    parseRRNTemplate: string;
-    department: string;
-    merchantId?: string;
 }
 
 export default Terminal;
