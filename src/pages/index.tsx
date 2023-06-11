@@ -1,8 +1,8 @@
 import React from 'react';
-import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import {GlobalOutlined, UserOutlined, PrinterOutlined, ShopOutlined, AppstoreOutlined} from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
 import Organization from "@/pages/menuPages/Companie";
-import Cashregister from "@/pages/menuPages/Cashregister";
+import Cashregister from "@/pages/menuPages/Cashregister/Cashregister";
 import Terminal from "@/pages/menuPages/Terminal/Terminal";
 import Catalog from "@/pages/menuPages/Catalog";
 import Pos from "@/pages/menuPages/Pos";
@@ -37,9 +37,9 @@ export default function Home() {
                       defaultSelectedKeys={[MenuItems.POS]}
                       items={[
                           ...[
-                          {icon: UserOutlined, name: MenuItems.POS},
-                          {icon: UserOutlined, name: MenuItems.CATALOG},
-                          {icon: VideoCameraOutlined, name: MenuItems.ORG},
+                          {icon: ShopOutlined, name: MenuItems.POS},
+                          {icon: AppstoreOutlined, name: MenuItems.CATALOG},
+                          {icon: GlobalOutlined, name: MenuItems.ORG},
                       ].map(
                           ({icon, name}) => ({
                             key: name,
@@ -49,7 +49,7 @@ export default function Home() {
                                 setActiveMenu(item.key as MenuItems);
                             },
                           })),
-                      { key: MenuDeviceItems.DEVICES, label: MenuDeviceItems.DEVICES, icon: React.createElement(UserOutlined), children: [
+                      { key: MenuDeviceItems.DEVICES, label: MenuDeviceItems.DEVICES, icon: React.createElement(PrinterOutlined), children: [
                         { key: MenuDeviceItems.CASHREGISTER, label: MenuDeviceItems.CASHREGISTER, onClick: () => setActiveMenu(MenuDeviceItems.CASHREGISTER)},
                         { key: MenuDeviceItems.TERMINAL, label: MenuDeviceItems.TERMINAL, onClick: () => setActiveMenu(MenuDeviceItems.TERMINAL)}
                       ]},
