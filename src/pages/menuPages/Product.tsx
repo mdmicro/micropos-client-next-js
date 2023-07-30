@@ -1,12 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Input, notification, Select, Space} from "antd";
+import {Button, Form, Image, Input, notification, Select, Space, Upload, UploadProps} from "antd";
 import axios from 'axios';
 import {CategoryProductData} from "@/pages/menuPages/CategoryProduct";
+import {UploadOutlined} from "@ant-design/icons";
 
 const Product: React.FC = () => {
     const [form] = Form.useForm<ProductData>()
     const [curProductId, setCurProductId] = useState<number | null>(null)
     const [categoryProducts, setCategoryProducts] = useState<CategoryProductData[]>()
+    const [imagePath, setImagePath] = useState<string | undefined>()
+    const [fileList, setFileList] = useState<string[] | undefined>()
     const [products, setProducts] = useState<ProductData[]>([{
         id: null,
         name: '',
@@ -72,6 +75,21 @@ const Product: React.FC = () => {
         curProduct && form?.setFieldsValue(curProduct)
     };
 
+    const getImage = () => {
+        const imageUuid = form?.getFieldsValue()?.image_uuid;
+        axios.get(`api/image/:${imageUuid}`).then( res => {
+            if (res) {
+                setImagePath(res.data?.imagePath)
+            } else {
+                console.log("Ошибка загрузки изображения");
+                notification.error({message: 'Ошибка ', description: res})
+            }
+        }).catch(e => {
+            console.log(e)
+            // notification.error({message: 'Ошибка ', description: e.message})
+        })
+    }
+
     const getProducts = () => {
         axios.get('api/product').then(
             async res => {
@@ -106,9 +124,30 @@ const Product: React.FC = () => {
         );
     }
 
+    const handlerUpload = (info: any) => {
+        console.log(info)
+        if (info.file.status !== 'uploading') {
+            console.log(info.file, info.fileList);
+        }
+        if (info.file.status === 'done') {
+            console.log(info);
+        } else if (info.file.status === 'error') {
+            console.log(info.fileList);
+        }
+
+        setFileList(info.fileList)
+    }
+
+    const uploadProps: UploadProps = {
+        action: 'api/imageUpload',
+        maxCount: 1,
+        multiple: true,
+    }
+
     useEffect(() => {
         getProducts();
         getCategoryProducts();
+        getImage();
     }, []);
 
     return (
@@ -129,7 +168,7 @@ const Product: React.FC = () => {
             name="products"
             style={{marginBottom: '40px'}}
         >
-             <Select allowClear={true} onChange={handlerSelect} options={
+            <Select allowClear={true} onChange={handlerSelect} options={
                 products && products.map(item => {
                     return {
                         value: item.id,
@@ -144,7 +183,7 @@ const Product: React.FC = () => {
         <Form.Item
             label="Наименование товара или услуги"
             name="name"
-            rules={[{ required: true, message: 'Введите наименование организации!' }]}>
+            rules={[{ required: true, message: 'Введите наименование организации!'}]}>
             <Input/>
         </Form.Item>
         <Form.Item
@@ -220,19 +259,23 @@ const Product: React.FC = () => {
         <Form.Item
             label="Договор поставки"
             name="contract_uuid"
-            rules={[{ required: false, message: '' }]}>
+            rules={[{ required: false, message: ''}]}>
             <Input/>
         </Form.Item>
         <Form.Item
             label="Изображение"
             name="image_uuid"
-            rules={[{ required: false, message: '' }]}>
-            <Input/>
+            rules={[{ required: false, message: ''}]}
+        >
+            <Image src={imagePath} width={'100px'} height={'100px'} />
+            <Upload {...uploadProps} onChange={handlerUpload} accept={'.png, .jpg, .jpeg, .bmp'} >
+                <Button icon={<UploadOutlined />} style={{marginLeft: '5px'}} />
+            </Upload>
         </Form.Item>
         <Form.Item
             label="Дополнительно"
             name="description"
-            rules={[{ required: false, message: '' }]}>
+            rules={[{ required: false, message: ''}]}>
             <Input />
         </Form.Item>
 
