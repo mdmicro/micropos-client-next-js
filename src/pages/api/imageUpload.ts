@@ -47,7 +47,7 @@ export default async function handler(
         for (const file of files) {
 
             /** options: file[1].originalFilename || ''  !!! указывать обязательно при отправке файла, иначе со стороны
-             * гуйки Ошибка 500, на стороне сервера - file будет пустым, не будет парситься на сервере !!! */
+             * GUI Ошибка 500, на стороне сервера - file будет пустым, не будет парситься на сервере !!! */
             formData.append(file[0], fs.createReadStream(file[1].filepath), file[1].originalFilename || '');
             // formData.append(file[0], await fsp.readFile(file[1].filepath), file[1].originalFilename || ''); // также работает
         }
@@ -56,7 +56,7 @@ export default async function handler(
   switch (req.method) {
     case 'GET': {
       try {
-        response = await axios.get('http://' + urlSrv + '/imageUpload')
+        response = await axios.get('http://' + urlSrv + `/imageUpload/:${req.body?.id}`)
         // console.log('resp data:' + response.data)
         res.status(response.status).send(response.data)
       } catch (e: any) {

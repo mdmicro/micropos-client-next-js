@@ -8,8 +8,7 @@ const Product: React.FC = () => {
     const [form] = Form.useForm<ProductData>()
     const [curProductId, setCurProductId] = useState<number | null>(null)
     const [categoryProducts, setCategoryProducts] = useState<CategoryProductData[]>()
-    const [imagePath, setImagePath] = useState<string | undefined>()
-    const [fileList, setFileList] = useState<string[] | undefined>()
+    const [file, setFile] = useState<UploadResponse | undefined>()
     const [products, setProducts] = useState<ProductData[]>([{
         id: null,
         name: '',
@@ -21,7 +20,7 @@ const Product: React.FC = () => {
         vat: null,
         category_uuid: null,
         contract_uuid: null,
-        image_uuid: null,
+        image_file_name: null,
         description: '',
     }])
 
@@ -70,35 +69,30 @@ const Product: React.FC = () => {
 
     const handlerSelect = async (id: number) => {
         await setCurProductId(id)
-        console.log("handlerSelect: " + id)
+       // console.log("handlerSelect: " + id)
         const curProduct = products.find(item => item.id === id)
-        curProduct && form?.setFieldsValue(curProduct)
+        if (curProduct) {
+            form?.setFieldsValue(curProduct)
+            getImageFileName()
+        }
     };
 
-    const getImage = () => {
-        const imageUuid = form?.getFieldsValue()?.image_uuid;
-        axios.get(`api/image/:${imageUuid}`).then( res => {
-            if (res) {
-                setImagePath(res.data?.imagePath)
-            } else {
-                console.log("Ошибка загрузки изображения");
-                notification.error({message: 'Ошибка ', description: res})
-            }
-        }).catch(e => {
-            console.log(e)
-            // notification.error({message: 'Ошибка ', description: e.message})
-        })
+    const getImageFileName = () => {
+        /** true необходим, чтобы получить значение поля при первом рендеренге формы, иначе будут загружены значения по умолчанию */
+        const fieldsValue = form?.getFieldsValue(true);
+        console.log(fieldsValue)
+        fieldsValue && setFile({filename: fieldsValue.image_file_name});
     }
 
     const getProducts = () => {
         axios.get('api/product').then(
             async res => {
-                console.log("Get products: " + JSON.stringify(res, null, 1))
-                console.log("getProducts: " + curProductId)
+         //       console.log("Get products: " + JSON.stringify(res, null, 1))
+         //       console.log("getProducts: " + curProductId)
                 if(res) {
                     await setProducts(res.data)
                 } else {
-                    console.log("Ошибка загрузки списка продуктов");
+             //       console.log("Ошибка загрузки списка продуктов");
                     notification.error({message: 'Ошибка ', description: res})
                 }
             }
@@ -127,15 +121,19 @@ const Product: React.FC = () => {
     const handlerUpload = (info: any) => {
         console.log(info)
         if (info.file.status !== 'uploading') {
-            console.log(info.file, info.fileList);
+            // console.log(info.file, info.fileList);
         }
         if (info.file.status === 'done') {
-            console.log(info);
+            // console.log(info);
+            setFile({
+                filename: info.file?.response?.filename,
+                originalname: info.file?.response?.originalname
+            })
+            // form?.setFieldValue("image_file_name", file?.filename)
+            form?.setFieldValue("image_file_name", info.file?.response?.filename)
         } else if (info.file.status === 'error') {
-            console.log(info.fileList);
+            // console.log(info.fileList);
         }
-
-        setFileList(info.fileList)
     }
 
     const uploadProps: UploadProps = {
@@ -147,7 +145,7 @@ const Product: React.FC = () => {
     useEffect(() => {
         getProducts();
         getCategoryProducts();
-        getImage();
+        getImageFileName();
     }, []);
 
     return (
@@ -264,10 +262,10 @@ const Product: React.FC = () => {
         </Form.Item>
         <Form.Item
             label="Изображение"
-            name="image_uuid"
+            name="image_file_name"
             rules={[{ required: false, message: ''}]}
         >
-            <Image src={imagePath} width={'100px'} height={'100px'} />
+            {file?.filename && <Image src={`http://localhost:3000/imageUpload/${file?.filename}`} width={'100px'} height={'100px'} />}
             <Upload {...uploadProps} onChange={handlerUpload} accept={'.png, .jpg, .jpeg, .bmp'} >
                 <Button icon={<UploadOutlined />} style={{marginLeft: '5px'}} />
             </Upload>
@@ -303,6 +301,11 @@ const Product: React.FC = () => {
     );
 }
 
+interface UploadResponse {
+    filename?: string;
+    originalname?: string;
+}
+
 export interface ProductData {
     id: number | null
     name: string
@@ -314,7 +317,7 @@ export interface ProductData {
     vat: Vat | null
     category_uuid: string | null
     contract_uuid: string | null
-    image_uuid: string | null
+    image_file_name: string | null
     description: string | null
 }
 
