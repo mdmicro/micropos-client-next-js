@@ -21,14 +21,13 @@ const Product: React.FC = () => {
         category_uuid: null,
         contract_uuid: null,
         image_file_name: null,
+        original_image_file_name: null,
         description: '',
     }])
 
     const onFinish = (values: ProductData) => {
         axios.post('api/product',values).then(async res => {
             console.log('next front product post res')
-            // console.log(res.status)
-            // console.log(res.statusText)
             // console.log(JSON.stringify(res.data, null, 1))
             notification.success({message: 'Сохранено', duration: 3})
             if (!curProductId) {
@@ -52,8 +51,6 @@ const Product: React.FC = () => {
     }
 
     const handlerDelete = (values: ProductData) => {
-        // console.log('-=handler delete=-')
-        // console.log(JSON.stringify(values, null, 1))
         if(!values) {
             return;
         }
@@ -80,8 +77,7 @@ const Product: React.FC = () => {
     const getImageFileName = () => {
         /** true необходим, чтобы получить значение поля при первом рендеренге формы, иначе будут загружены значения по умолчанию */
         const fieldsValue = form?.getFieldsValue(true);
-        console.log(fieldsValue)
-        fieldsValue && setFile({filename: fieldsValue.image_file_name});
+        fieldsValue && setFile({filename: fieldsValue.image_file_name, originalname: fieldsValue.original_image_file_name});
     }
 
     const getProducts = () => {
@@ -92,13 +88,11 @@ const Product: React.FC = () => {
                 if(res) {
                     await setProducts(res.data)
                 } else {
-             //       console.log("Ошибка загрузки списка продуктов");
                     notification.error({message: 'Ошибка ', description: res})
                 }
             }
         ).catch(e=>{
                 console.log(e)
-                // notification.error({message: 'Ошибка ', description: e.message})
             }
         );
     }
@@ -121,18 +115,17 @@ const Product: React.FC = () => {
     const handlerUpload = (info: any) => {
         console.log(info)
         if (info.file.status !== 'uploading') {
-            // console.log(info.file, info.fileList);
+            console.log(info.file);
         }
         if (info.file.status === 'done') {
-            // console.log(info);
             setFile({
                 filename: info.file?.response?.filename,
                 originalname: info.file?.response?.originalname
             })
-            // form?.setFieldValue("image_file_name", file?.filename)
             form?.setFieldValue("image_file_name", info.file?.response?.filename)
+            form?.setFieldValue("original_image_file_name", info.file?.response?.originalname)
         } else if (info.file.status === 'error') {
-            // console.log(info.fileList);
+            console.log(info.file);
         }
     }
 
@@ -183,6 +176,23 @@ const Product: React.FC = () => {
             name="name"
             rules={[{ required: true, message: 'Введите наименование организации!'}]}>
             <Input/>
+        </Form.Item>
+        <Form.Item
+            label="Изображение"
+            name="image_file_name"
+            rules={[{ required: false, message: ''}]}
+        >
+            {file?.filename && <Image src={`http://localhost:3000/imageUpload/${file?.filename}`} width={'100px'} height={'100px'} />}
+            <Upload {...uploadProps} onChange={handlerUpload} accept={'.png, .jpg, .jpeg, .bmp'} >
+                <Button icon={<UploadOutlined />} style={{marginLeft: '5px', marginRight: '5px'}} />
+                {file?.originalname || ''}
+            </Upload>
+        </Form.Item>
+        <Form.Item
+            name="original_image_file_name"
+            hidden={true}
+        >
+            <Input />
         </Form.Item>
         <Form.Item
             label="Тип предмета расчёта"
@@ -261,16 +271,6 @@ const Product: React.FC = () => {
             <Input/>
         </Form.Item>
         <Form.Item
-            label="Изображение"
-            name="image_file_name"
-            rules={[{ required: false, message: ''}]}
-        >
-            {file?.filename && <Image src={`http://localhost:3000/imageUpload/${file?.filename}`} width={'100px'} height={'100px'} />}
-            <Upload {...uploadProps} onChange={handlerUpload} accept={'.png, .jpg, .jpeg, .bmp'} >
-                <Button icon={<UploadOutlined />} style={{marginLeft: '5px'}} />
-            </Upload>
-        </Form.Item>
-        <Form.Item
             label="Дополнительно"
             name="description"
             rules={[{ required: false, message: ''}]}>
@@ -318,6 +318,7 @@ export interface ProductData {
     category_uuid: string | null
     contract_uuid: string | null
     image_file_name: string | null
+    original_image_file_name: string | null
     description: string | null
 }
 
