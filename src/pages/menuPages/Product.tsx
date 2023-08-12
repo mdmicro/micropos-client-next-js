@@ -28,7 +28,7 @@ const Product: React.FC = () => {
     const onFinish = (values: ProductData) => {
         axios.post('api/product',values).then(async res => {
             console.log('next front product post res')
-            // console.log(JSON.stringify(res.data, null, 1))
+            console.log(JSON.stringify(res.data, null, 1))
             notification.success({message: 'Сохранено', duration: 3})
             if (!curProductId) {
                 await setCurProductId(res.data.id)
@@ -66,7 +66,7 @@ const Product: React.FC = () => {
 
     const handlerSelect = async (id: number) => {
         await setCurProductId(id)
-       // console.log("handlerSelect: " + id)
+        console.log("handlerSelect: " + id)
         const curProduct = products.find(item => item.id === id)
         if (curProduct) {
             form?.setFieldsValue(curProduct)
@@ -83,18 +83,15 @@ const Product: React.FC = () => {
     const getProducts = () => {
         axios.get('api/product').then(
             async res => {
-         //       console.log("Get products: " + JSON.stringify(res, null, 1))
-         //       console.log("getProducts: " + curProductId)
+               console.log("Get products: " + JSON.stringify(res, null, 1))
+               console.log("getProducts: " + curProductId)
                 if(res) {
                     await setProducts(res.data)
                 } else {
                     notification.error({message: 'Ошибка ', description: res})
                 }
             }
-        ).catch(e=>{
-                console.log(e)
-            }
-        );
+        ).catch(e=>console.log(e));
     }
     const getCategoryProducts = () => {
         axios.get('api/categoryProduct').then(
@@ -183,7 +180,9 @@ const Product: React.FC = () => {
             rules={[{ required: false, message: ''}]}
         >
             {file?.filename && <Image src={`http://localhost:3000/imageUpload/${file?.filename}`} width={'100px'} height={'100px'} />}
-            <Upload {...uploadProps} onChange={handlerUpload} accept={'.png, .jpg, .jpeg, .bmp'} >
+            <Upload {...uploadProps} onChange={handlerUpload} accept={'.png, .jpg, .jpeg, .bmp'}
+                    // listType={'picture-card'}
+                    showUploadList={false}>
                 <Button icon={<UploadOutlined />} style={{marginLeft: '5px', marginRight: '5px'}} />
                 {file?.originalname || ''}
             </Upload>
