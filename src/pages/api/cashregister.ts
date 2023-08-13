@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from "axios";
 import {urlSrv} from "@/types/reqTypes";
-import {CashregisterData} from "@/pages/menuPages/Cashregister/Cashregister";
+import {CashregisterData} from "@/pages/menuPages/Devices/Cashregister/Cashregister";
 
 
 export default async function handler(
