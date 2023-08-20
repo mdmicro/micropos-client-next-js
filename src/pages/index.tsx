@@ -8,8 +8,8 @@ import {
     BarsOutlined
 } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
-import Cashregister from "@/pages/menuPages/Cashregister/Cashregister";
-import Terminal from "@/pages/menuPages/Terminal/Terminal";
+import Cashregister from "@/pages/menuPages/Devices/Cashregister/Cashregister";
+import Terminal from "@/pages/menuPages/Devices/Terminal/Terminal";
 import Product from "@/pages/menuPages/Product";
 import Pos from "@/pages/menuPages/Pos";
 import Companie from "@/pages/menuPages/Companie";

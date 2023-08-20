@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Input, notification, Select, Space} from "antd";
+import {Button, Form, Image, Input, notification, Select, Space, Upload, UploadProps} from "antd";
 import axios from 'axios';
 import {CategoryProductData} from "@/pages/menuPages/CategoryProduct";
+import {UploadOutlined} from "@ant-design/icons";
 
 const Product: React.FC = () => {
     const [form] = Form.useForm<ProductData>()
     const [curProductId, setCurProductId] = useState<number | null>(null)
     const [categoryProducts, setCategoryProducts] = useState<CategoryProductData[]>()
+    const [file, setFile] = useState<UploadResponse | undefined>()
     const [products, setProducts] = useState<ProductData[]>([{
         id: null,
         name: '',
@@ -18,16 +20,15 @@ const Product: React.FC = () => {
         vat: null,
         category_uuid: null,
         contract_uuid: null,
-        image_uuid: null,
+        image_file_name: null,
+        original_image_file_name: null,
         description: '',
     }])
 
     const onFinish = (values: ProductData) => {
         axios.post('api/product',values).then(async res => {
             console.log('next front product post res')
-            // console.log(res.status)
-            // console.log(res.statusText)
-            // console.log(JSON.stringify(res.data, null, 1))
+            console.log(JSON.stringify(res.data, null, 1))
             notification.success({message: 'Сохранено', duration: 3})
             if (!curProductId) {
                 await setCurProductId(res.data.id)
@@ -50,8 +51,6 @@ const Product: React.FC = () => {
     }
 
     const handlerDelete = (values: ProductData) => {
-        // console.log('-=handler delete=-')
-        // console.log(JSON.stringify(values, null, 1))
         if(!values) {
             return;
         }
@@ -69,26 +68,30 @@ const Product: React.FC = () => {
         await setCurProductId(id)
         console.log("handlerSelect: " + id)
         const curProduct = products.find(item => item.id === id)
-        curProduct && form?.setFieldsValue(curProduct)
+        if (curProduct) {
+            form?.setFieldsValue(curProduct)
+            getImageFileName()
+        }
     };
+
+    const getImageFileName = () => {
+        /** true необходим, чтобы получить значение поля при первом рендеренге формы, иначе будут загружены значения по умолчанию */
+        const fieldsValue = form?.getFieldsValue(true);
+        fieldsValue && setFile({filename: fieldsValue.image_file_name, originalname: fieldsValue.original_image_file_name});
+    }
 
     const getProducts = () => {
         axios.get('api/product').then(
             async res => {
-                console.log("Get products: " + JSON.stringify(res, null, 1))
-                console.log("getProducts: " + curProductId)
+               console.log("Get products: " + JSON.stringify(res, null, 1))
+               console.log("getProducts: " + curProductId)
                 if(res) {
                     await setProducts(res.data)
                 } else {
-                    console.log("Ошибка загрузки списка продуктов");
                     notification.error({message: 'Ошибка ', description: res})
                 }
             }
-        ).catch(e=>{
-                console.log(e)
-                // notification.error({message: 'Ошибка ', description: e.message})
-            }
-        );
+        ).catch(e=>console.log(e));
     }
     const getCategoryProducts = () => {
         axios.get('api/categoryProduct').then(
@@ -106,9 +109,33 @@ const Product: React.FC = () => {
         );
     }
 
+    const handlerUpload = (info: any) => {
+        console.log(info)
+        if (info.file.status !== 'uploading') {
+            console.log(info.file);
+        }
+        if (info.file.status === 'done') {
+            setFile({
+                filename: info.file?.response?.filename,
+                originalname: info.file?.response?.originalname
+            })
+            form?.setFieldValue("image_file_name", info.file?.response?.filename)
+            form?.setFieldValue("original_image_file_name", info.file?.response?.originalname)
+        } else if (info.file.status === 'error') {
+            console.log(info.file);
+        }
+    }
+
+    const uploadProps: UploadProps = {
+        action: 'api/imageUpload',
+        maxCount: 1,
+        multiple: true,
+    }
+
     useEffect(() => {
         getProducts();
         getCategoryProducts();
+        getImageFileName();
     }, []);
 
     return (
@@ -129,7 +156,7 @@ const Product: React.FC = () => {
             name="products"
             style={{marginBottom: '40px'}}
         >
-             <Select allowClear={true} onChange={handlerSelect} options={
+            <Select allowClear={true} onChange={handlerSelect} options={
                 products && products.map(item => {
                     return {
                         value: item.id,
@@ -144,8 +171,27 @@ const Product: React.FC = () => {
         <Form.Item
             label="Наименование товара или услуги"
             name="name"
-            rules={[{ required: true, message: 'Введите наименование организации!' }]}>
+            rules={[{ required: true, message: 'Введите наименование организации!'}]}>
             <Input/>
+        </Form.Item>
+        <Form.Item
+            label="Изображение"
+            name="image_file_name"
+            rules={[{ required: false, message: ''}]}
+        >
+            {file?.filename && <Image src={`http://localhost:3000/imageUpload/${file?.filename}`} width={'100px'} height={'100px'} />}
+            <Upload {...uploadProps} onChange={handlerUpload} accept={'.png, .jpg, .jpeg, .bmp'}
+                    // listType={'picture-card'}
+                    showUploadList={false}>
+                <Button icon={<UploadOutlined />} style={{marginLeft: '5px', marginRight: '5px'}} />
+                {file?.originalname || ''}
+            </Upload>
+        </Form.Item>
+        <Form.Item
+            name="original_image_file_name"
+            hidden={true}
+        >
+            <Input />
         </Form.Item>
         <Form.Item
             label="Тип предмета расчёта"
@@ -220,19 +266,13 @@ const Product: React.FC = () => {
         <Form.Item
             label="Договор поставки"
             name="contract_uuid"
-            rules={[{ required: false, message: '' }]}>
-            <Input/>
-        </Form.Item>
-        <Form.Item
-            label="Изображение"
-            name="image_uuid"
-            rules={[{ required: false, message: '' }]}>
+            rules={[{ required: false, message: ''}]}>
             <Input/>
         </Form.Item>
         <Form.Item
             label="Дополнительно"
             name="description"
-            rules={[{ required: false, message: '' }]}>
+            rules={[{ required: false, message: ''}]}>
             <Input />
         </Form.Item>
 
@@ -260,6 +300,11 @@ const Product: React.FC = () => {
     );
 }
 
+interface UploadResponse {
+    filename?: string;
+    originalname?: string;
+}
+
 export interface ProductData {
     id: number | null
     name: string
@@ -271,7 +316,8 @@ export interface ProductData {
     vat: Vat | null
     category_uuid: string | null
     contract_uuid: string | null
-    image_uuid: string | null
+    image_file_name: string | null
+    original_image_file_name: string | null
     description: string | null
 }
 

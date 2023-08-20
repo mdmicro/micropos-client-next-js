@@ -3,7 +3,7 @@ import {Button, Form, Input, notification, Select, Space} from "antd";
 import axios from 'axios';
 import {CompanieData} from "@/pages/menuPages/Companie";
 import {SettingOutlined} from "@ant-design/icons";
-import CashregisterConfigModal, {CashregisterConfig} from "@/pages/menuPages/Cashregister/CashregisterConfigModal";
+import CashregisterConfigModal, {CashregisterConfig} from "@/pages/menuPages/Devices/Cashregister/CashregisterConfigModal";
 
 
 const Cashregister: React.FC = () => {

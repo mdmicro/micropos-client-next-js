@@ -3,7 +3,7 @@ import {Button, Form, Input, notification, Select, Space} from "antd";
 import axios from 'axios';
 import {CompanieData} from "@/pages/menuPages/Companie";
 import {SettingOutlined} from "@ant-design/icons";
-import TerminalModalConfig, {TerminalConfig} from "@/pages/menuPages/Terminal/TerminalConfigModal";
+import TerminalModalConfig, {TerminalConfig} from "@/pages/menuPages/Devices/Terminal/TerminalConfigModal";
 
 
 const Terminal: React.FC = () => {
