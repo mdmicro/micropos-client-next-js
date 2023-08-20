@@ -14,6 +14,7 @@ import Product from "@/pages/menuPages/Product";
 import Pos from "@/pages/menuPages/Pos";
 import Companie from "@/pages/menuPages/Companie";
 import CategoryProduct from "@/pages/menuPages/CategoryProduct";
+import Printer from "@/pages/menuPages/Printer/Printer";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -61,7 +62,8 @@ export default function Home() {
                           ]},
                       { key: MenuDeviceItems.DEVICES, label: MenuDeviceItems.DEVICES, icon: React.createElement(PrinterOutlined), children: [
                         { key: MenuDeviceItems.CASHREGISTER, label: MenuDeviceItems.CASHREGISTER, onClick: () => setActiveMenu(MenuDeviceItems.CASHREGISTER)},
-                        { key: MenuDeviceItems.TERMINAL, label: MenuDeviceItems.TERMINAL, onClick: () => setActiveMenu(MenuDeviceItems.TERMINAL)}
+                        { key: MenuDeviceItems.TERMINAL, label: MenuDeviceItems.TERMINAL, onClick: () => setActiveMenu(MenuDeviceItems.TERMINAL)},
+                        { key: MenuDeviceItems.PRINTER, label: MenuDeviceItems.PRINTER, onClick: () => setActiveMenu(MenuDeviceItems.PRINTER)}
                       ]},
                       ]}
                   />
@@ -87,6 +89,7 @@ const ContentIn = (activeMenu: MenuItems | MenuDeviceItems) => {
             case MenuDeviceItems.DEVICES: return <></>
             case MenuDeviceItems.CASHREGISTER: return <Cashregister />
             case MenuDeviceItems.TERMINAL: return <Terminal />
+            case MenuDeviceItems.PRINTER: return <Printer />
         }
 }
 
@@ -102,4 +105,5 @@ enum MenuDeviceItems {
     DEVICES = 'Устройства',
     CASHREGISTER = 'ККТ',
     TERMINAL = 'Терминал',
+    PRINTER = 'Принтер',
 }
