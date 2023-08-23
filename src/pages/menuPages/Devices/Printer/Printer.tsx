@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, Input, notification, Select, Space} from "antd";
 import axios from 'axios';
-import {CompanieData} from "@/pages/menuPages/Companie";
 import {SettingOutlined} from "@ant-design/icons";
-import PrinterConfigModal, {PrinterConfig} from "@/pages/menuPages/Printer/PrinterConfigModal";
+import PrinterConfigModal, {PrinterConfig} from "@/pages/menuPages/Devices/Printer/PrinterConfigModal";
 
 
 const Printer: React.FC = () => {

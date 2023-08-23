@@ -14,7 +14,7 @@ import Product from "@/pages/menuPages/Product";
 import Pos from "@/pages/menuPages/Pos";
 import Companie from "@/pages/menuPages/Companie";
 import CategoryProduct from "@/pages/menuPages/CategoryProduct";
-import Printer from "@/pages/menuPages/Printer/Printer";
+import Printer from "@/pages/menuPages/Devices/Printer/Printer";
 
 const { Header, Content, Footer, Sider } = Layout;
 
