@@ -181,7 +181,7 @@ const Cashregister: React.FC = () => {
                                             type="text"
                                             htmlType="button"
                                             onClick={() => setModalVisible(true)}
-                                            icon={<SettingOutlined/>}
+                                            // icon={<SettingOutlined />}
                                         >
                                               Настройка
                                         </Button>
