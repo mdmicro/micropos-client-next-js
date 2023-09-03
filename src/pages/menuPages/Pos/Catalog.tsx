@@ -1,10 +1,11 @@
-import {Anchor, Card, Col, Layout, Row, theme} from 'antd';
+import {Anchor, Card, Col, Layout, Row, Space, theme} from 'antd';
 import React, {FC} from 'react';
 import {CategoryProductData} from "@/pages/menuPages/CategoryProduct";
+import {ProductData} from "@/pages/menuPages/Product";
 
 const  {Content, Header, Footer} = Layout;
 
- const Catalog: FC<{list: Array<CategoryProductData>}> = ({list}) => {
+ const Catalog: FC<CatalogProps> = ({categories,products}) => {
      const {token: { colorBgContainer }} = theme.useToken();
 
      const gridStyle: React.CSSProperties = {
@@ -14,15 +15,21 @@ const  {Content, Header, Footer} = Layout;
          color: '#ffffff'
      };
 
-console.log(list);
      return (
-         <div style={{padding: '10px', width: '1000px'}}>
-             <Card title="Категории товаров" style={{textAlign: 'center', border: 0}}>
-                 {list?.length && list.map(item => <Card.Grid style={gridStyle}>{item.name}</Card.Grid>)}
+         <Space align={'baseline'}>
+             <Card title="Категории товаров" style={{textAlign: 'center', border: 0, padding: '10px', width: '220px'}}>
+                 {categories && categories.map(item => <Card.Grid style={gridStyle}>{item.name}</Card.Grid>)}
              </Card>
-         </div>
+             <Card title="Товары" style={{textAlign: 'center', border: 0, width: '810px'}}>
+                 {products && products.map(item => <Card.Grid style={gridStyle}>{item.name}</Card.Grid>)}
+             </Card>
+         </Space>
      )
 }
 
-
 export default Catalog;
+
+ interface CatalogProps {
+     categories: Array<CategoryProductData>;
+     products: Array<ProductData>;
+ }
