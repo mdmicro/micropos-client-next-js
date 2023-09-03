@@ -7,7 +7,8 @@ import {Button, Space, theme} from "antd";
 
      const ButtonWorkPanelCSS: React.CSSProperties = {
          width: '150px',
-         height: '45px'
+         height: '45px',
+         marginBottom: '0px'
      }
      const ButtonWorkPanel = () => {
          return (

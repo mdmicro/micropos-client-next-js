@@ -9,7 +9,8 @@ const Catalog: FC<CatalogProps> = ({categories,products}) => {
      width: '200px',
      textAlign: 'center',
      background: '#a2cbf6',
-     color: '#ffffff'
+     color: '#ffffff',
+     marginBottom: '20px'
     };
 
     return (
