@@ -11,7 +11,7 @@ import { Layout, Menu, theme } from 'antd';
 import Cashregister from "@/pages/menuPages/Devices/Cashregister/Cashregister";
 import Terminal from "@/pages/menuPages/Devices/Terminal/Terminal";
 import Product from "@/pages/menuPages/Product";
-import Pos from "@/pages/menuPages/Pos";
+import Pos from "@/pages/menuPages/Pos/Pos";
 import Companie from "@/pages/menuPages/Companie";
 import CategoryProduct from "@/pages/menuPages/CategoryProduct";
 import Printer from "@/pages/menuPages/Devices/Printer/Printer";
@@ -19,14 +19,12 @@ import Printer from "@/pages/menuPages/Devices/Printer/Printer";
 const { Header, Content, Footer, Sider } = Layout;
 
 export default function Home() {
-      const {
-      token: { colorBgContainer },
-    } = theme.useToken();
+      const {token: { colorBgContainer }} = theme.useToken();
       const [activeMenu, setActiveMenu] = React.useState<MenuItems | MenuDeviceItems>(MenuItems.POS);
 
       return (
           <Layout>
-          <Header style={{ padding: 0, background: colorBgContainer }} />
+          <Header style={{ height: '10px', background: colorBgContainer }} />
               <Layout>
                 <Sider
                     breakpoint="lg"
@@ -37,11 +35,11 @@ export default function Home() {
                     onCollapse={(collapsed, type) => {
                       console.log(collapsed, type);
                     }}
-                    style={{background: 0xffff , marginTop: 0}}
+                    style={{background: colorBgContainer  , marginTop: 0}}
                 >
                   <Menu
                       theme="light"
-                      mode="vertical"
+                      mode="inline"
                       defaultSelectedKeys={[MenuItems.POS]}
                       items={[
                           ...[
@@ -74,7 +72,7 @@ export default function Home() {
                     </div>
                   </Content>
                 </Layout>
-              <Footer style={{ textAlign: 'center' }}>mLab</Footer>
+              <Footer style={{ textAlign: 'center', background: colorBgContainer }}>mLab</Footer>
       </Layout>
       );
 }
