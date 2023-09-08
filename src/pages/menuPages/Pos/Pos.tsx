@@ -5,6 +5,7 @@ import axios from "axios";
 import {CategoryProductData} from "@/pages/menuPages/CategoryProduct";
 import Catalog from "@/pages/menuPages/Pos/Catalog";
 import {ProductData} from "@/pages/menuPages/Product";
+import Recycled from "@/pages/menuPages/Pos/Recycled";
 
 
 const Pos: FC = () => {
@@ -35,9 +36,14 @@ const Pos: FC = () => {
  },[])
 
   return (
-      <Space direction={'horizontal'}>
-          <Space><Catalog categories={categoryProducts} products={products} /></Space>
-          <Space><WorkPanel /></Space>
+      <Space direction={'horizontal'} align={'baseline'}>
+          <Space>
+              <Catalog categories={categoryProducts} products={products} />
+          </Space>
+          <Space direction={'vertical'}>
+              <Space><Recycled /></Space>
+              <Space><WorkPanel /></Space>
+          </Space>
       </Space>
   );
 }
